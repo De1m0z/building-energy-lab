@@ -4,7 +4,9 @@ A local application for Group 3’s CPE127 architectural energy study. It runs a
 
 Authors: Frizza Mae G. Cale, Julea Kriszel M. Guzman, and Annika Ruzzette A. Lomugdang.
 
-## Start here
+**Windows 10/11:** Follow the [Windows setup guide](WINDOWS_SETUP.md) for step-by-step PowerShell instructions.
+
+## Start here (Linux)
 
 Use Python 3.12 on Linux with its `venv` module. Clone the repository and install the locked environment:
 
