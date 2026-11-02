@@ -4,28 +4,86 @@ A local application for Group 3’s CPE127 architectural energy study. It runs a
 
 Authors: Frizza Mae G. Cale, Julea Kriszel M. Guzman, and Annika Ruzzette A. Lomugdang.
 
-**Windows 10/11:** Follow the [Windows setup guide](WINDOWS_SETUP.md) for step-by-step PowerShell instructions.
+## Windows setup
 
-## Start here (Linux)
+Use Windows 10/11 on an Intel/AMD 64-bit computer and Python 3.12. The six trained pipelines and completed study are included. Internet is needed for the first installation; prepared inference works offline afterward. No GPU or API key is required.
 
-Use Python 3.12 on Linux with its `venv` module. Clone the repository and install the locked environment:
+### 1. Install Python 3.12
 
-```bash
+Install the **Python install manager** from [Python's Windows downloads page](https://www.python.org/downloads/windows/). Close and reopen PowerShell, then run:
+
+```powershell
+pymanager install 3.12
+pymanager exec -V:3.12 --version
+```
+
+Expected output: `Python 3.12.x`.
+
+If Python 3.12 is already installed with the older launcher, check `py -3.12 --version`. You can use `py -3.12` instead of `pymanager exec -V:3.12` below.
+
+### 2. Download and extract the project
+
+1. Select **Code → Download ZIP** on this repository, or [download the source ZIP](https://github.com/De1m0z/building-energy-lab/archive/refs/heads/main.zip).
+2. Right-click the ZIP and select **Extract All**.
+3. Open the extracted folder containing `app.py`, `requirements.txt`, and `energy_study`.
+4. Click File Explorer's address bar, type `powershell`, and press **Enter**.
+
+Check that PowerShell is in the correct folder:
+
+```powershell
+Get-Item .\app.py, .\requirements.txt
+```
+
+If Git is already installed, you can clone the project instead:
+
+```powershell
 git clone https://github.com/De1m0z/building-energy-lab.git
 cd building-energy-lab
-./setup.sh
-./run.sh
 ```
 
-The six trained pipelines and completed study are included. After the first setup, start the app with `./run.sh`.
+### 3. Create the environment and install packages
 
-Open **http://127.0.0.1:8765**. Stop the server with **Ctrl+C** in its terminal. If the port is occupied, keep the existing app or choose a different port:
+Run these commands one at a time from the project folder:
 
-```bash
-PORT=8766 ./run.sh
+```powershell
+pymanager exec -V:3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-The prepared application runs offline. It binds only to this computer, not the local network.
+Wait for installation to finish successfully. The commands use the environment's Python executable directly, so activation and PowerShell execution-policy changes are unnecessary. Create the environment on the Windows computer itself rather than copying one from another computer.
+
+### 4. Check the prepared models
+
+```powershell
+.\.venv\Scripts\python.exe -c "from app import Study; print('Models ready:', len(Study().models))"
+```
+
+Expected output: `Models ready: 6`.
+
+This checks the model files, dataset checksum, and core package versions. A complete download normally needs no retraining. Resolve any reported error before continuing.
+
+### 5. Start the application
+
+```powershell
+$env:OMP_NUM_THREADS = "1"
+$env:OPENBLAS_NUM_THREADS = "1"
+$env:MKL_NUM_THREADS = "1"
+.\.venv\Scripts\python.exe -m uvicorn app:app --host 127.0.0.1 --port 8765 --workers 1
+```
+
+Keep this PowerShell window open and wait for `Application startup complete`.
+
+### 6. Open the app
+
+Open Chrome or Edge and visit **http://127.0.0.1:8765**.
+
+The initial study record should show heating **15.96** and cooling **22.40**. To try dataset testing, select **Test your dataset → Try simulated example → Validate mapping → Run dataset test**.
+
+To stop the server, press **Ctrl+C** in PowerShell. Next time, open PowerShell in the project folder and repeat **step 5**; installation is not repeated for every launch.
+
+If port `8765` is occupied, replace `--port 8765` with `--port 8766` in step 5 and open **http://127.0.0.1:8766**.
+
+The prepared application binds only to this computer. For additional setup troubleshooting, see [Windows setup errors](WINDOWS_SETUP.md#common-setup-errors). Windows x64 dependency availability has been checked; installation and startup on a native Windows computer have not yet been tested.
 
 The interface includes short view and result transitions, button feedback, and a glazing preview that responds to your selection. Motion uses native browser features and stops for keyboard interaction or the system’s reduced-motion setting. Prediction values are displayed directly; they are not animated through invented intermediate values.
 
@@ -35,19 +93,7 @@ A Cloudflare Quick Tunnel can share this app while this computer and the tunnel 
 
 The demonstration tunnel on the original development computer saves its URL and process IDs in `.cache/tunnel/state.json`; its logs are in the same folder. That sharing instance uses a separate dataset folder at `.cache/tunnel/datasets`, so online visitors do not see imports from the local `user_data/` library. These machine-specific files are excluded from Git. All visitors to a public sharing instance share its dataset library. Stop the tunnel process to revoke the link. The hostname changes when a new Quick Tunnel is created. See [Cloudflare Quick Tunnels](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/).
 
-Optional environment variables are `PORT` (default `8765`) and `ENERGY_PUBLIC_HOST` (empty by default). Set them in the shell when launching the app. `.env.example` lists the keys for reference; the scripts do not automatically load `.env` files.
-
-## First installation on another Linux computer
-
-Use Python 3.12 with its `venv` module and internet access for the initial dependency installation:
-
-```bash
-chmod +x setup.sh run.sh
-./setup.sh
-./run.sh
-```
-
-`setup.sh` creates an isolated environment, installs the exact versions in `requirements.txt`, and checks that the study bundle can load. The submission includes prepared artifacts, so it normally does not need to retrain. Missing artifacts trigger the study preparation, which downloads the UCI spreadsheet if needed and can take several minutes. No GPU or API key is required. Internet is not needed for subsequent launches.
+For a sharing instance, set `$env:ENERGY_PUBLIC_HOST = "example.trycloudflare.com"` to its exact generated hostname before launching. The Windows launch command's `--port` option selects its HTTP port. `.env.example` lists configuration keys for reference; `.env` files are not automatically loaded.
 
 ## Four workspaces
 
@@ -105,28 +151,28 @@ There is no account, telemetry, cloud storage, or external inference service. So
 
 Rerun the complete study explicitly, with the server stopped:
 
-```bash
-.venv/bin/python study.py
+```powershell
+.\.venv\Scripts\python.exe study.py
 ```
 
 This regenerates study results and model artifacts. The experiment uses seed 42, an 80/20 development/test split, five-fold development CV, and nested leave-one-shape-out evaluation with three inner grouped folds. The locally reproduced headline MAEs match the paper: RF holdout **0.356 / 1.202** and MLR unseen-shape **3.473 / 3.926**, for heating/cooling. Runtime values are measured on this computer and differ from the paper’s host-specific values.
 
 Run the API/data checks:
 
-```bash
-.venv/bin/python -m pytest -q
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
 ```
 
-For browser checks, install Google Chrome (the current computer already has it), start a temporary copy of the app on port 8797 with a temporary dataset folder, and run:
+For browser checks, install Google Chrome and start a temporary copy of the app on port 8797 with a temporary dataset folder:
 
-```bash
-.venv/bin/python -c 'import app, tempfile, uvicorn; from pathlib import Path; app.DATASET_ROOT = Path(tempfile.mkdtemp(prefix="energy-browser-")); uvicorn.run(app.app, host="127.0.0.1", port=8797)'
+```powershell
+.\.venv\Scripts\python.exe -c "import app, tempfile, uvicorn; from pathlib import Path; app.DATASET_ROOT = Path(tempfile.mkdtemp(prefix='energy-browser-')); uvicorn.run(app.app, host='127.0.0.1', port=8797)"
 ```
 
 Leave that terminal open. In a second terminal in the same folder:
 
-```bash
-.venv/bin/python tests/browser_check.py http://127.0.0.1:8797
+```powershell
+.\.venv\Scripts\python.exe .\tests\browser_check.py http://127.0.0.1:8797
 ```
 
 The browser check creates only simulated test imports on its test server. Use a separate server to avoid populating your own dataset library. An optional second argument is a local `axe.min.js` file for WCAG automated checks. The recorded verification used the installed webapp-testing server helper, an isolated data folder, and axe-core. Screenshots and the result summary are in `verification/` on this computer.
@@ -135,8 +181,8 @@ The current Starlette test client emits a deprecation warning for HTTPX; this do
 
 ## Troubleshooting
 
-- **Engine unavailable:** confirm `./run.sh` is running, then reload the page.
-- **Missing study artifacts or environment mismatch:** run `./setup.sh` and restart. Do not replace trained pipelines with files from another scikit-learn version.
+- **Engine unavailable:** confirm the PowerShell server from step 5 is running, then reload the page.
+- **Missing study artifacts or environment mismatch:** extract the complete repository, repeat the package installation in step 3, and check the models in step 4. Do not replace trained pipelines with files from another scikit-learn version.
 - **Changed dataset checksum:** restore the original UCI spreadsheet from the submission or source, then rerun the study if you intentionally changed the experiment.
 - **Upload errors:** use a template, keep data on the first Excel sheet, use fractions for X7, and correct invalid rows or explicitly opt into valid rows only.
 - **No reference scores:** supply mapped Y1/Y2 references, units, measurement definitions, and comparability confirmation. Predictions can run without reference scores.
