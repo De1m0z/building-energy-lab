@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183a3a">
+  <title>Building Energy Lab · Group 3</title>
+  <link rel="icon" href="/static/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to workspace</a>
+<header class="site-header">
+  <a class="brand" href="#predict" aria-label="Building Energy Lab home"><img src="/static/mark.svg" alt="" width="36" height="36"><span>BUILDING<br><strong>ENERGY LAB</strong></span></a>
+  <nav aria-label="Workspace">
+    <a href="#predict" data-view="predict" aria-current="page"><span class="nav-number" aria-hidden="true">01</span> Predict</a>
+    <a href="#compare" data-view="compare"><span class="nav-number" aria-hidden="true">02</span> Compare designs</a>
+    <a href="#study" data-view="study"><span class="nav-number" aria-hidden="true">03</span> Study results</a>
+    <a href="#datasets" data-view="datasets"><span class="nav-number" aria-hidden="true">04</span> Test your dataset <span class="nav-plus" aria-hidden="true">↗</span></a>
+  </nav>
+  <div class="engine-status"><span class="status-dot"></span><span id="engine-status">Connecting…</span></div>
+</header>
+<main id="main">
+  <div id="connection-error" class="notice error" role="alert" hidden></div>
+
+  <section id="view-predict" class="view" aria-labelledby="predict-title">
+    <div class="page-intro">
+      <div><p class="eyebrow">GROUP 03 / ARCHITECTURAL INTELLIGENCE</p><h1 id="predict-title" tabindex="-1">Explore a design.<br>See its energy response.</h1><p class="lede">Choose a configuration. Compare three models. Understand the heating and cooling response.</p></div>
+      <div class="study-stamp"><span class="stamp-no">01—12</span><span>SIMULATED SHAPE FAMILIES</span><span class="stamp-rule"></span><span>768 CONFIGURATIONS · 3 MODELS</span></div>
+    </div>
+    <div class="workspace-grid">
+      <article class="panel design-panel">
+        <div class="panel-heading"><div><span class="section-index">01 / CONFIGURATION</span><h2>Your study design</h2></div><span class="tag">Guided inputs</span></div>
+        <form id="predict-form" class="design-form"></form>
+        <div id="design-geometry" class="geometry-facts"></div>
+        <div class="envelope-drawing" aria-label="Illustrative building envelope; not a reconstruction of the selected shape" role="img">
+          <div class="drawing-toolbar" aria-hidden="true"><span>ENVELOPE STUDY</span><span id="glazing-readout">0% glazing</span></div>
+          <svg viewBox="0 0 580 225" aria-hidden="true">
+            <defs><pattern id="draft-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" class="grid-line"/></pattern></defs>
+            <rect width="580" height="225" fill="url(#draft-grid)"/>
+            <path d="M140 155 315 205 465 125M140 155V70L315 120V205M315 120 465 40V125M140 70 290 0 465 40" class="building-line" transform="translate(0 12)"/>
+            <path d="M157 94 295 133V164L157 125ZM335 135 445 76V104L335 163Z" class="drawing-glazing"/>
+            <path d="M110 65V165M103 65h14M103 165h14M160 204l131 37" class="dimension-line"/>
+            <text x="83" y="128" class="drawing-label" transform="rotate(-90 83 128)">ENVELOPE HEIGHT</text>
+            <text x="25" y="206" class="drawing-label">FIG. A / ENVELOPE SCHEMATIC</text>
+            <text x="411" y="205" class="drawing-label">NOT TO SCALE</text>
+          </svg>
+        </div>
+      </article>
+      <article class="panel prediction-panel">
+        <div class="panel-heading"><div><span class="section-index">02 / MODEL RESPONSE</span><h2>Predicted energy loads</h2></div><span id="prediction-record" class="tag">Ready to predict</span></div>
+        <div id="prediction-message" class="message" role="status" aria-live="polite"></div>
+        <div id="prediction-placeholder" class="result-placeholder">
+          <span class="placeholder-label">READY WHEN YOU ARE</span>
+          <h3>A configuration is just the beginning.</h3>
+          <p>Run the models to reveal both load estimates and compare their predictions.</p>
+          <div class="placeholder-values" aria-hidden="true"><span>Heating<strong>—</strong></span><span>Cooling<strong>—</strong></span></div>
+        </div>
+        <div id="prediction-output" hidden>
+          <div class="prediction-cards"><div class="load-card heating"><span class="load-symbol" aria-hidden="true">↗</span><p>Heating load</p><strong id="heating-value">—</strong><span>ORIGINAL DATASET LOAD UNITS</span></div><div class="load-card cooling"><span class="load-symbol" aria-hidden="true">↘</span><p>Cooling load</p><strong id="cooling-value">—</strong><span>ORIGINAL DATASET LOAD UNITS</span></div></div>
+          <div class="result-caption"><span><span class="mini-dot"></span>Random Forest · selected by development CV</span><span id="inference-time" class="mono"></span></div>
+          <h3 class="small-heading">Three approaches. One configuration.</h3>
+          <div id="prediction-table"></div>
+          <details class="reference-details"><summary>Show simulated reference</summary><div id="prediction-reference"></div></details>
+          <div class="inline-actions"><button class="button secondary" id="prediction-export" type="button">Export predictions ↓</button><button class="text-button" id="use-in-compare" type="button">Compare this design →</button></div>
+        </div>
+        <div class="scope-note"><span class="note-index">A NOTE ON CONTEXT</span><p>This is a model of a simulated benchmark. Its estimates are not measured electricity use or a validated assessment of a Philippine building.</p></div>
+      </article>
+    </div>
+    <div class="context-strip"><span>THE EXPERIMENT</span><p>Eight architectural inputs. Separate heating and cooling models. A deliberate distinction between familiar designs and unfamiliar shapes.</p><a href="#study">Explore the evidence ↗</a></div>
+  </section>
+
+  <section id="view-compare" class="view" aria-labelledby="compare-title" hidden>
+    <div class="page-intro compact"><div><p class="eyebrow">DESIGN EXPLORATION / SIDE BY SIDE</p><h1 id="compare-title" tabindex="-1">One change.<br>A different response.</h1><p class="lede">Compare two valid study configurations using the same frozen model pipelines.</p></div><span class="outline-number" aria-hidden="true">A/B</span></div>
+    <form id="compare-form"><div class="compare-designs"><article class="panel"><div class="panel-heading"><h2><span class="design-letter">A</span> Reference design</h2></div><div id="compare-a" class="design-form"></div></article><article class="panel"><div class="panel-heading"><h2><span class="design-letter">B</span> Alternative design</h2></div><div id="compare-b" class="design-form"></div></article></div><div class="compare-action"><p>Differences are <strong>B − A</strong>, in original dataset load units.</p><button class="button primary" type="submit"><span class="button-label">Compare designs</span> <span class="button-arrow" aria-hidden="true">→</span></button></div></form>
+    <div id="compare-message" class="message" role="status" aria-live="polite"></div>
+    <article id="compare-output" class="panel" hidden><div class="panel-heading"><div><span class="section-index">MODEL COMPARISON</span><h2>The difference, made visible.</h2></div><button id="compare-export" class="button secondary" type="button">Export comparison ↓</button></div><div id="comparison-table"></div><div id="comparison-reference" class="scope-note"></div></article>
+  </section>
+
+  <section id="view-study" class="view" aria-labelledby="study-title" hidden>
+    <div class="page-intro compact"><div><p class="eyebrow">THE RESEARCH / EVIDENCE & LIMITS</p><h1 id="study-title" tabindex="-1">The test changes.<br>The winner changes.</h1><p class="lede">A good familiar-design score does not establish performance on a shape the model has never seen.</p></div><a class="button secondary" href="/api/results" download="local-study-results.json">Download study data ↓</a></div>
+    <div id="study-message" class="message" role="status"></div>
+    <div id="study-content" hidden>
+      <div id="study-statistics" class="stat-strip"></div>
+      <div class="results-grid"><article class="panel"><div class="panel-heading"><div><span class="section-index">01 / GENERALIZATION</span><h2>Two tests of the same idea</h2></div></div><fieldset class="target-picker"><legend class="sr-only">Response to display</legend><label><input type="radio" name="study-target" value="Y1" checked><span>Heating</span></label><label><input type="radio" name="study-target" value="Y2"><span>Cooling</span></label></fieldset><div id="protocol-chart"></div><p class="chart-key"><span class="key-familiar"></span> Random holdout <span class="key-shape"></span> Unseen shape</p><div id="study-metrics"></div><p class="fine-print">Lower MAE and RMSE are better. R² is not percentage accuracy. The two protocols use different fitted estimators and evaluation sets.</p></article><article class="panel"><div class="panel-heading"><div><span class="section-index">02 / MODEL RELIANCE</span><h2>What the forest relies on</h2></div><span class="tag">RF only</span></div><div id="importance-chart"></div><div id="importance-table"></div><p class="fine-print">Increase in holdout MAE after shuffling one input, averaged over 30 permutations. Correlated geometry complicates interpretation; these values do not measure causal effects.</p></article></div>
+      <article class="panel study-section"><div class="panel-heading"><div><span class="section-index">03 / ARCHITECTURAL DEMONSTRATION</span><h2>More glazing. A less simple answer.</h2></div><span class="tag">Saved out-of-fold predictions</span></div><p>These matched records hold the other seven descriptors constant. The predictions come from models that excluded their entire shape during training.</p><div id="glazing-table"></div><p class="fine-print">The cooling ordering is preserved but overestimated. The simulated heating tie at 25% and 40% is not preserved. This is a comparison of recorded alternatives, not an optimized building.</p></article>
+      <article class="panel study-section"><div class="panel-heading"><div><span class="section-index">04 / COMPUTATIONAL COST</span><h2>Measured on this machine</h2></div></div><div id="timing-table"></div><p class="fine-print">Median final-fit time from 5 repetitions; single-record prediction from 1,000 calls after 100 warm-up calls. Preprocessing is included. These are not comparisons against an energy simulator.</p></article>
+      <details class="panel study-section diagnostic-details"><summary>Inspect predictions, residuals, and shape-fold errors <span aria-hidden="true">+</span></summary><div id="diagnostic-figures"></div><div id="fold-table"></div></details>
+      <details class="panel study-section diagnostic-details"><summary>Reproducibility, paper comparison, and sources <span aria-hidden="true">+</span></summary><div id="run-provenance"></div><div id="paper-comparison"></div><p>The local experiment preserves the notebook’s folds, tuning grids, preprocessing, and model-selection rule. Minor numerical and timing differences can occur across environments.</p><p><a href="https://archive.ics.uci.edu/dataset/242/energy+efficiency" target="_blank" rel="noreferrer">UCI Energy Efficiency dataset ↗</a> · <a href="https://colab.research.google.com/drive/1wxaNXO2KGBlvo9ZNlJlpicMZXNLpZMNM" target="_blank" rel="noreferrer">Original notebook ↗</a></p><p class="fine-print">External source links require internet; the application and prepared study work offline. UCI data: CC BY 4.0, Tsanas & Xifara (2012), DOI 10.24432/C51307.</p></details>
+    </div>
+  </section>
+
+  <section id="view-datasets" class="view" aria-labelledby="datasets-title" hidden>
+    <div class="page-intro compact"><div><p class="eyebrow">EXTERNAL DATA / YOUR OWN EXPERIMENT</p><h1 id="datasets-title" tabindex="-1">Bring your data.<br>Test the assumptions.</h1><p class="lede">Upload building inputs, map the columns, and test the frozen study models against your own records.</p></div><span class="local-badge"><span class="status-dot"></span> Files stay on this computer</span></div>
+    <ol id="dataset-steps" class="workflow-steps" aria-label="Dataset testing progress">
+      <li data-step="0" data-state="current" aria-current="step"><span class="step-number" aria-hidden="true">01</span><div><strong>Import</strong><span>CSV or Excel</span></div><span class="step-state sr-only">Current step</span></li>
+      <li data-step="1" data-state="upcoming"><span class="step-number" aria-hidden="true">02</span><div><strong>Map & validate</strong><span>Eight building inputs</span></div><span class="step-state sr-only">Upcoming</span></li>
+      <li data-step="2" data-state="upcoming"><span class="step-number" aria-hidden="true">03</span><div><strong>Test & explore</strong><span>Compare and export</span></div><span class="step-state sr-only">Upcoming</span></li>
+    </ol>
+    <div class="dataset-workspace"><div class="dataset-main">
+      <article class="panel import-panel">
+        <div class="panel-heading"><div><span class="section-index">01 / IMPORT</span><h2>A place for your dataset</h2></div><span class="tag">Local files only</span></div>
+        <form id="upload-form">
+          <label class="file-picker" for="dataset-file"><span class="upload-icon" aria-hidden="true">↥</span><strong id="file-picker-label">Drop your dataset here</strong><span>or click to browse · CSV or XLSX</span><input id="dataset-file" name="file" type="file" accept=".csv,.xlsx" required></label>
+          <div class="file-limits"><span>5 MiB max</span><span>10,000 rows</span><span>64 columns</span></div>
+          <div class="inline-actions"><button id="upload-button" class="button primary" type="submit"><span class="button-label">Upload & inspect</span><span class="button-arrow" aria-hidden="true">→</span></button><span id="selected-filename" class="fine-print">Excel imports use the first worksheet.</span></div>
+        </form>
+        <div id="upload-message" class="message" role="status" aria-live="polite"></div>
+        <div class="example-action"><div><strong>Just exploring?</strong><p>Try four simulated records from the study.</p></div><button id="try-example" class="button secondary" type="button"><span class="button-label">Try simulated example</span><span class="button-arrow" aria-hidden="true">↗</span></button></div>
+        <div class="template-links"><span>DOWNLOAD A TEMPLATE</span><a href="/api/template/csv">CSV ↓</a><a href="/api/template/xlsx">Excel ↓</a><a href="/api/template/example">Simulated demo data ↓</a></div>
+      </article>
+      <article id="dataset-editor" class="panel study-section" hidden>
+        <div class="panel-heading"><div><span class="section-index">02 / MAP & VALIDATE</span><h2 id="dataset-name" tabindex="-1">Dataset</h2></div><span id="dataset-size" class="tag"></span></div>
+        <p id="dataset-sheet" class="fine-print"></p>
+        <details class="data-preview"><summary>Preview the first 20 source records</summary><div id="source-preview"></div></details>
+        <form id="mapping-form">
+          <div class="mapping-heading"><h3>Architectural inputs</h3><span id="mapping-completeness" class="tag">0 of 8 mapped</span></div>
+          <p class="field-intro">Match each building input to a column in your file. All eight are required.</p>
+          <div id="column-mapping" class="mapping-grid"></div>
+          <label class="data-source-field">Data source<select id="dataset-source"><option value="unknown">Unknown / not specified</option><option value="measurements">Real building measurements</option><option value="simulation">Building simulation</option></select></label>
+          <details id="reference-options" class="reference-options">
+            <summary><span>Add reference loads for error scores</span><span class="tag">Optional</span></summary>
+            <p class="field-intro">Have known heating or cooling loads? Map them here to compare predictions with reference values. They are never model inputs.</p>
+            <div id="reference-mapping" class="mapping-grid"></div>
+            <div class="metadata-fields"><label>Reference load units<input id="response-units" maxlength="160" placeholder="Required for reference-error scores"></label><label>Reference definition / measurement basis<input id="response-definition" maxlength="500" placeholder="What do the reference values measure?"></label></div>
+            <label class="check-label"><input id="confirm-comparable" type="checkbox"><span>I have checked that the reference loads use definitions and units comparable to the benchmark. <small>This is my declaration; the app cannot independently verify equivalence.</small></span></label>
+          </details>
+          <details class="input-guide"><summary>Input conventions & category codes</summary><p>X7 is a fraction (0.25 = 25% of floor area). X6 uses source orientation codes 2–5. X8 uses 0 = no glazing, 1 = uniform, 2–5 = north/east/south/west emphasis. Physical input scales must match the source benchmark; no automatic unit conversion is performed.</p></details>
+          <div class="dataset-actions"><div class="inline-actions"><button id="validate-button" class="button secondary" type="button"><span class="button-label">Validate mapping</span><span class="button-arrow" aria-hidden="true">→</span></button><button id="evaluate-button" class="button primary" type="submit" disabled><span class="button-label">Run dataset test</span><span class="button-arrow" aria-hidden="true">→</span></button></div><p id="dataset-next-action" class="fine-print">Review the mappings, then validate to enable testing.</p></div>
+          <label id="skip-invalid-label" class="check-label" hidden><input id="skip-invalid" type="checkbox"><span>Evaluate valid rows only. Keep rejected records in the exported report.</span></label>
+        </form>
+        <div id="dataset-message" class="message" role="status" aria-live="polite"></div><div id="validation-output" hidden></div>
+      </article>
+      <article id="dataset-results" class="panel study-section" hidden><div class="panel-heading"><div><span class="section-index">03 / EVALUATION</span><h2>Your results, with context.</h2></div><span id="evaluation-mode" class="tag"></span></div><p id="dataset-evaluation-note" class="fine-print"></p><div id="evaluation-statistics" class="stat-strip small"></div><div id="dataset-score-table"></div><div id="dataset-plots" class="external-plots"></div><div class="inline-actions"><a id="dataset-csv" class="button secondary" href="#">Download row-level CSV ↓</a><button id="dataset-json" type="button" class="text-button">Download JSON report ↓</button></div><details class="data-preview"><summary>Inspect prediction rows (first 100)</summary><div id="dataset-predictions"></div></details></article>
+    </div><aside class="dataset-aside"><div class="panel library-panel"><span class="section-index">LOCAL LIBRARY</span><h2>Saved datasets</h2><p class="fine-print">Imports and their latest test are saved locally, separate from the benchmark.</p><div id="dataset-library"></div></div><div class="dataset-context"><span class="section-index">WHAT CAN I TEST?</span><p>Building data with the same eight architectural inputs.</p><p>Reference heating or cooling loads are optional. Without comparable references, you can predict, but cannot measure errors.</p><p>Electricity bills alone do not match this model’s inputs and targets. This workspace evaluates existing models; it does not retrain them.</p></div></aside></div>
+  </section>
+</main>
+<footer class="site-footer"><span>BUILDING ENERGY LAB <span class="footer-separator">/</span> GROUP 03</span><p>Frizza Mae G. Cale · Julea Kriszel M. Guzman · Annika Ruzzette A. Lomugdang</p><span>SIMULATED BENCHMARK · LOCAL WORKSPACE</span></footer>
+</body>
+</html>

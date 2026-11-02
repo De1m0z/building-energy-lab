@@ -1,0 +1,14 @@
+.venv/
+.cache/
+__pycache__/
+.pytest_cache/
+user_data/
+verification/
+graphify-out/
+.env*
+!.env.example
+*.log
+.DS_Store
+*.zip
+!energy_study/data/energy_efficiency.zip
+

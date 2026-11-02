@@ -1,0 +1,23 @@
+{
+  "source_notebook": "https://colab.research.google.com/drive/1wxaNXO2KGBlvo9ZNlJlpicMZXNLpZMNM",
+  "core_training_cell": "169 lines; only ROOT path adapted, executable entry point appended",
+  "runtime": {
+    "python": "3.12.3",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3",
+    "scipy": "1.16.3",
+    "sklearn": "1.6.1"
+  },
+  "duration_seconds": 244.092497955,
+  "selected_models": {
+    "Y1": "RF",
+    "Y2": "RF"
+  },
+  "dataset_sha256": "0089fcffc1415e41e2ff63730cca5280efe54fc43d722dfde1b0aaa808e35dc4",
+  "paper_matches": {
+    "holdout_heating_RF": true,
+    "holdout_cooling_RF": true,
+    "shape_heating_MLR": true,
+    "shape_cooling_MLR": true
+  }
+}
